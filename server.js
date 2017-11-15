@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 
 //and create our instances
 var app = express();
-var router = require('./routes/index.js');
+var router = require('./routes/routes.js');
 
 //set our port to either a predetermined port number if you have set
 //it up, or 3001
@@ -15,8 +15,8 @@ var port = process.env.API_PORT || 3001;
 
 
 //Set up default mongoose connection
-var mongoDB = 'mongodb://127.0.0.1:27017/mern_database';
-mongoose.connect(mongoDB, {
+let mongoConnectString = 'mongodb://127.0.0.1:27017/ontologydb';
+mongoose.connect(mongoConnectString, {
     useMongoClient: true
 });
 
@@ -53,34 +53,3 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.listen(port, function() {
     console.log(`api running on port ${port}`);
 });
-
-router.get('/', function(req, res) {
-    res.json({ message: 'API Initialized!'});
-});
-
-
-
-//adding the /comments route to our /api router
-router.route('/comments')
-//retrieve all comments from the database
-    .get(function(req, res) {
-        //looks at our Comment Schema
-        Comment.find(function(err, comments) {
-            if (err)
-                res.send(err);
-            else res.json(comments)
-        });
-    })
-    //post new comment to the database
-    .post(function(req, res) {
-        let comment = new Comment();
-        //body parser lets us use the req.body
-        comment.author = req.body.author;
-        comment.text = req.body.text;
-        console.log("adding comment: " + comment.author + " " + comment.text);
-        comment.save(function(err) {
-            if (err)
-                res.send(err);
-            res.json({ message: 'Comment successfully added!' });
-        });
-    });

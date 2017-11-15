@@ -112,7 +112,7 @@ nodeSchema.methods = {
 nodeSchema.statics = {
     getByUri: function(uri)
     {
-        return Node.findOne({uri:uri})
+        return this.findOne({uri:uri})
             .populate('parent_node')
             .populate('prereqs')
             .exec();
@@ -122,9 +122,12 @@ nodeSchema.statics = {
     /**
      * Fetch all the tree matching the domain name
      */
-    getTree: domain_uri => this.find({domain_uri: domain_uri})
-        .populate('prereqs')
-    ,
+    getTree: function(domain_uri) {
+        return this.find({domain_uri: domain_uri})
+            .populate('prereqs')
+            .exec()
+    },
+
 
     /**
      * Fetch first n tiers of a tree
