@@ -117,7 +117,6 @@ getDomainsCount = async function(count)
     return domainList.length === count;
 };
 
-
-createData();
+module.exports.createData = createData;
 
 

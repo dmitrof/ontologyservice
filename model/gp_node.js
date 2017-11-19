@@ -33,6 +33,7 @@ const nodeSchema = new Schema({
     prereq_uris :[{
         type: String
     }],
+    children: [],
     created_at : {type: Date},
     updated_at : {type: Date},
 } , {timestamps : { createdAt : 'created_at', updatedAt : 'updated_at'}},
@@ -145,7 +146,7 @@ nodeSchema.statics = {
     /**
      * Fetch all the tree matching the domain name
      */
-    getTree: function(domain_uri) {
+    getAllNodes: function(domain_uri) {
         return this.find({domain_uri: domain_uri})
             .exec()
     },
@@ -157,6 +158,13 @@ nodeSchema.statics = {
     getTreeLimited: function(domain_uri) {
         return this.find({domain_uri: domain_uri});
     },
+
+    leaveConstructor: function(fields)
+    {
+        fields.node_type = nodeTypes.LEAVE;
+        return new Node(fields);
+    }
+
 
 };
 
