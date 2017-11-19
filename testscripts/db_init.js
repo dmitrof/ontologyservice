@@ -38,22 +38,22 @@ createData = async function()
     await Node.create(root);
 
     let node1 = getNode('node1', domain_uri);
-    await node1.setParent(root_uri);
+    await node1.setExistingParent(root_uri);
     await Node.create(node1);
 
     let node2 = getNode('node2', domain_uri);
-    await node2.setParent('node1');
+    await node2.setExistingParent('node1');
     await Node.create(node2);
-    console.log((await Node.findOne({uri: 'node2'})).parent_node);
+    console.log((await Node.findOne({uri: 'node2'})).parent_uri);
 
     let node3 = getNode('node3', domain_uri);
-    await node3.setParent('node2');
+    await node3.setExistingParent('node1');
     await Node.create(node3);
-    let oldParentNodeId = (await Node.findOne({uri: 'node3'})).parent_node;
+    let oldParentNodeId = (await Node.findOne({uri: 'node3'})).parent_uri;
 
     await (await Node.findOne({uri: 'node3'})).setParentAndSave('node2');
 
-    let newParentNodeId = (await Node.findOne({uri: 'node3'})).parent_node;
+    let newParentNodeId = (await Node.findOne({uri: 'node3'})).parent_uri;
 
     assert.notEqual(oldParentNodeId, newParentNodeId);
 
@@ -63,13 +63,13 @@ createData = async function()
     console.log(" is isolated: " + node1.isIsolated());
 
     let populated = await Node.getByUri('node3');
-    console.log(populated.prereqs);
+    console.log(populated.prereq_uris);
 
-    (await Domain.getByUri(domain_uri)).removeTree();
+    //(await Domain.getByUri(domain_uri)).removeTree();
 
     //Node.remove({domain_uri:"domain_uri_1"});
 
-    console.log(domain_uri.concat(' is removed with all nodes'));
+    //console.log(domain_uri.concat(' is removed with all nodes'));
 
 };
 

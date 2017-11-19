@@ -16,7 +16,23 @@ module.exports.checkParameters = function(params)
     }
 };
 
-module.exports.checkParam = function(param)
+checkParam = function(param)
 {
     return (param) && (param !== undefined);
+};
+
+module.exports.checkParam = checkParam;
+
+module.exports.updateQueryParams = function(updateParams)
+{
+    reqs = {};
+    for (let param in updateParams)
+    {
+        if (checkParam(param))
+        {
+            reqs[param] = updateParams[param];
+        }
+    }
+    return reqs;
+
 };
