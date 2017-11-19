@@ -8,6 +8,11 @@ const domainSchema =  new Schema( {
     description : { type: String, default : "Unidentified domain"},
     published : {type: Boolean, default: false},
     created_at : {type: Date},
+    author : {
+        type: String,
+        required: true,
+        default: "unknown author"
+    },
     updated_at : {type: Date}
 } , {timestamps : { createdAt : 'created_at', updatedAt : 'updated_at'}}, {collection : "items"});
 
@@ -17,9 +22,16 @@ domainSchema.methods = {
             Node.remove({domain_uri: this.uri})
         ]);
     },
+
     savePublished: function() {
         this.published = true;
         return this.save();
+    },
+
+    saveAndPublish: function(props)
+    {
+        props.published = true;
+        return this.save(props);
     }
 };
 
@@ -31,16 +43,6 @@ domainSchema.statics = {
     getPublished: function() {
         return this.find({published: true}).limit(10);
     },
-
-    saveAndPublish: function(uri, name, description)
-    {
-        return this.create(new Domain({
-            uri: uri,
-            name : name,
-            description: description,
-            pusblished: true
-        }))
-    }
 };
 
 const Domain = mongoose.model('domain', domainSchema);
