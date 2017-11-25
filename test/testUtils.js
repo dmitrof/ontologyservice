@@ -10,7 +10,7 @@ testTreeView = async function()
 {
     await createData();
     let nodes = await Node.find({domain_uri:domain_uri});
-    let [tree, isolated] = treeController.prepareTree(nodes);
+    let [tree, isolated] = treeController.unflattenTree(nodes);
     //assert(true);
     console.log(tree);
 };

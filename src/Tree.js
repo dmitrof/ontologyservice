@@ -32,6 +32,7 @@ class Tree extends Component
     render()
     {
         let rootNodes = this.state.tree.map(node => this.constructNode(node));
+        console.log(rootNodes);
         let isolatedNodes = this.state.isolated.map(node => this.constructNode(node));
         let domain = this.state.domain !== undefined ? this.state.domain : {name: "", uri:"", description: ""};
         console.log(this.state.isolated);

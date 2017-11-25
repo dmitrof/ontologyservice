@@ -18,6 +18,8 @@ router.route('/trees/:domain_uri')
     .post(treeController.editDomain)
     .delete(treeController.removeDomain);
 
+router.get('/trees/subtree/:subtree_rooturi', treeController.getSubTree);
+
 router.post('/tree/addDomain', treeController.addDomain);
 router.post('/tree/removeDomain', treeController.removeDomain);
 router.post('/tree/removeTree', treeController.removeTree);

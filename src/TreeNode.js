@@ -30,7 +30,7 @@ class TreeNode extends Component
             <h3>{this.props.node.name}</h3>
             <h5>uri : {this.props.node.uri}</h5>
             Подразделы:
-                <p style={{marginLeft:10}}>
+                <p style={{marginLeft:40}}>
                     {children}
                 </p>
         </div>)

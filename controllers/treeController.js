@@ -22,9 +22,18 @@ module.exports.getTree = async function(req, res)
         return;
     }
     try {
-        let [domain, nodes] = await getAllNodes(domain_uri);
-        let [tree, isolated] = prepareTree(nodes);
+        let [domain, flattenedTree, isolated] = await Promise.all([
+            Domain.find({uri: domain_uri}),
+            GraphNode.getSubTree(domain_uri),
+            GraphNode.getIsolatedNodes(domain_uri)
+        ]);
+
+
+        let tree = unflattenTree(flattenedTree);
+        //let tree = flattenedTree;
         let res_data = {
+            success: true,
+            message : 'tree ' + domain_uri + 'is successfully fetched',
             domain : domain,
             tree : tree,
             isolated: isolated
@@ -37,6 +46,14 @@ module.exports.getTree = async function(req, res)
     }
 };
 
+getSubTree = async function(req, res) {
+    let rootUri = req.params.subtree_rooturi;
+    let subTree = unflattenTree(await GraphNode.getSubTree(rootUri));
+
+    res.json({success:true, message : 'subtree ' + rootUri + ' is fetched', subTree : subTree});
+};
+
+module.exports.getSubTree = getSubTree;
 
 getTreeList = async function(req, res) {
     try {
@@ -47,6 +64,7 @@ getTreeList = async function(req, res) {
         res.status(500).send(err);
     }
 };
+
 
 module.exports.getTreeList = getTreeList;
 
@@ -82,35 +100,32 @@ module.exports.removeTree = async function(req, res)
     res.redirect('/api');
 };
 
-prepareTree = function(nodes)
+//todo rework
+unflattenTree = function(flattenedTree)
 {
-    const nodesMap = nodes.reduce((map, node) => {
-        map[node.uri] = node;
-        return map;
-    }, {});
-
-    const isolated = [];
-    const tree = nodes.filter(node => (node.isRoot()));
-
-    for (let node of nodes) {
-        if (helper.checkParam(node.parent_uri)) {
-            if (nodesMap.hasOwnProperty(node.parent_uri)) {
-                nodesMap[node.parent_uri].children = node;
-            }
-            else {
-                isolated.push(node);
-            }
-        }
-        else if (!node.isRoot())
+    let nodesMap = {};
+    let nodes = [];
+    let roots = [];
+    for (let root of flattenedTree)
+    {
+        for (let node of root.children)
         {
-            isolated.push(node);
+            nodesMap[node.uri] = node;
+            nodes.push(node);
         }
-
+        root.children = [];
+        nodesMap[root.uri] = root;
+        roots.push(root);
     }
-    return [tree, isolated];
+    for (let node of nodes) {
+        if (helper.checkParam(node.parent_uri) && nodesMap.hasOwnProperty(node.parent_uri)) {
+            nodesMap[node.parent_uri].children.push(node);
+        }
+    }
+    return roots;
 };
 
-module.exports.prepareTree = prepareTree;
+module.exports.unflattenTree = unflattenTree;
 
 gatherDomainData = function(req)
 {
@@ -122,4 +137,4 @@ gatherDomainData = function(req)
     };
 
     return helper.updateQueryParams(data);
-}
+};

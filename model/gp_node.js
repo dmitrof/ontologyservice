@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 
 const helper = require('./../controllers/controllerHelper');
 
+const config = require('./../config');
+
 const nodeTypes = {
     ROOT: 'root',
     DEFAULT: 'interim',
@@ -142,6 +144,24 @@ nodeSchema.statics = {
             .exec();
     },
 
+    getSubTree: function (root_uri) {
+        return this.aggregate
+        (
+            [
+                {$match: {parent_uri:root_uri}},
+                {
+                    $graphLookup: {
+                        from: 'nodes',
+                        startWith: '$uri',
+                        connectFromField: 'uri',
+                        connectToField: 'parent_uri',
+                        maxDepth: Math.max(0, config.maxLoadTreeDepth - 1),
+                        as: 'children'
+                    }
+                }
+            ]
+        )
+    },
 
     /**
      * Fetch all the tree matching the domain name
@@ -151,12 +171,10 @@ nodeSchema.statics = {
             .exec()
     },
 
-
-    /**
-     * Fetch first n tiers of a tree
-     */
-    getTreeLimited: function(domain_uri) {
-        return this.find({domain_uri: domain_uri});
+    //todo rework function
+    getIsolatedNodes(domain_uri)
+    {
+        return this.find({domain_uri: domain_uri, parent_uri: {$exists: false}})
     },
 
     leaveConstructor: function(fields)
