@@ -1,5 +1,6 @@
 const helper = require('./../controllers/controllerHelper');
 const Node = require('./../model/gp_node').Node;
+const Domain = require('./../model/domain').Domain;
 
 module.exports.addNode = async function (req, res) {
     try {
@@ -48,6 +49,47 @@ module.exports.updateNode = async function(req, res) {
     catch (err) {
         res.status(500).send(err);
     }
+};
+
+module.exports.getNodeParent = async function(req, res)
+{
+    let node_uri = req.params.node_uri;
+    let parentNode;
+    let node = await Node.findOne({uri: node_uri});
+    if (node.parent_uri)
+    {
+        if (!node.isRoot())
+            parentNode = await Node.find({uri: node.parent_uri});
+        else
+            parentNode = await Domain.find({uri: node.parent_uri});
+        res.json({message: 'node parent fetched', success: true, result: parentNode[0]});
+    }
+    else
+    {
+        res.json({message: 'node has no parents', success: false});
+    }
+};
+
+module.exports.getPrereqs = async function(req,res)
+{
+    let node_uri = req.params.node_uri;
+    let node = await Node.findOne({uri: node_uri});
+    let prereqs = await Node.find({uri: {$in: node.prereq_uris}});
+    res.json({message: 'node prereqs are fetched', success: true, result: prereqs});
+};
+
+module.exports.getDependants = async function(req, res) {
+    try {
+        let node_uri = req.params.node_uri;
+        if (!helper.checkParam(req.params.domain_uri))
+            domain_uri = (await Node.findOne({uri: node_uri})).domain_uri;
+        let dependantNodes = await Node.find({domain_uri: domain_uri, prereq_uris: {$all: [node_uri]}});
+        res.json({message: 'node for which' + node_uri +'is prereq are fetched', success: true, result: dependantNodes});
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+
 };
 
 gatherNodeData = function(req)

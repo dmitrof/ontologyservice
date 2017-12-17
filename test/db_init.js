@@ -97,7 +97,7 @@ generateTreeLevel = function(domainUri, previousLevel, allNodes, levelNumber, br
             let node_uri = domainUri.concat('_').concat(levelNumber).concat('_').concat(++index);
             let node = constructNode(node_uri, domainUri);
             node.parent_uri = parent.uri;
-            node.prereqs = fetchPrereqs(allNodes, 3);
+            node.prereq_uris = getRandomPrereqs(allNodes, 3);
             tree_level.push(node);
             allNodes.push(node);
         }
@@ -117,12 +117,13 @@ generateIsolatedNodes = function(domainUri, n)
     return nodes;
 };
 
-fetchPrereqs = function(nodes, n)
+getRandomPrereqs = function(nodes, n)
 {
     let prereqs = [];
-    for (let i = 0; i < Math.max(n, nodes.length); i++)
+    let prereqNum = Math.floor(Math.random() * n);
+    for (let i = 0; i < Math.min(prereqNum, nodes.length); i++)
     {
-        prereqs.push(nodes[Math.floor(Math.random() * this.length)]);
+        prereqs.push(nodes[Math.floor(Math.random() * nodes.length)].uri);
     }
     return prereqs;
 };
