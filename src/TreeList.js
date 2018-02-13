@@ -12,12 +12,12 @@ class TreeList extends Component
     constructor(props) {
         super(props);
         this.loadDomains = this.loadDomains.bind(this);
+        this.addDomain = this.addDomain.bind(this);
         this.state = { domains : []};
     }
 
     loadDomains()
     {
-        //todo axios root
         axios.get('http://localhost:3001/api/trees').then(res => {
             console.log(res.data.domains);
             this.setState({domains: res.data.domains});
@@ -32,7 +32,7 @@ class TreeList extends Component
     addDomain(params)
     {
         axios.post('http://localhost:3001/api/trees', params).then(res => {
-            console.log(res.message);
+            console.log(res.data.message);
             this.loadDomains();
         }).catch(err => console.log(err));
     }

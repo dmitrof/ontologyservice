@@ -23,7 +23,7 @@ module.exports.getTree = async function(req, res)
     }
     try {
         let [domain, flattenedTree, isolated] = await Promise.all([
-            Domain.find({uri: domain_uri}),
+            Domain.findOne({uri: domain_uri}),
             GraphNode.getSubTree(domain_uri),
             GraphNode.getIsolatedNodes(domain_uri)
         ]);

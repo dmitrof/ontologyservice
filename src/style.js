@@ -1,4 +1,24 @@
 const style = {
+    TreeNormal: {
+        border: '1px solid #f1f1f1',
+        backgroundColor: '#ffffff'
+    },
+    TreePrereq: {
+        border: '1px solid #f1f1f1',
+        backgroundColor: '#DDDDDD'
+    },
+    TreeNode: {
+        border: '1px solid #A1A1A1',
+        backgroundColor: '#ffffff'
+    },
+    TreeNodePrereqHover: {
+        border: '1px solid #A1A1A1',
+        backgroundColor: '#55ff55'
+    },
+    TreeNodeSelected: {
+        border: '1px solid #A1A1A1',
+        backgroundColor: '#ff5500'
+    },
     commentBox: {
         width: '80vw',
         margin: '0 auto',

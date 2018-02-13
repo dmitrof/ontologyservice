@@ -14,9 +14,9 @@ mongoose.connect(mongoDB, {
 //Кол-во прямых потомков каждой вершины
 const branchingFactor = 2;
 //Количество уровней (ярусов)
-const nlevels = 3;
+const nlevels = 1;
 //Число изолированных вершин
-const isolatedCount = 2;
+const isolatedCount = 1;
 
 createData = async function()
 {

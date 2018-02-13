@@ -11,6 +11,7 @@ class Domain extends Component
 {
     constructor(props) {
         super(props);
+        console.log(this.props.domain.uri);
         this.state = { domain: this.props.domain };
         this.handleUpdate = this.handleUpdate.bind(this);
     }

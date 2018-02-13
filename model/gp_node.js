@@ -64,10 +64,11 @@ nodeSchema.methods = {
             throw new Error('specified parent_uri' + parent_uri + 'does not exist');
         }
 
-        for (let prereq of found_prereqs)
+        //todo: нахера сие?
+        /*for (let prereq of found_prereqs)
         {
             this.prereq_uris.push(prereq);
-        }
+        }*/
         return this.save();
     },
 
