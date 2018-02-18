@@ -7,5 +7,4 @@ const mode = {
     CHOOSEPARENT: "chooseParent"
 };
 
-
 module.exports = mode;

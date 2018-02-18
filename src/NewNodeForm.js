@@ -54,6 +54,7 @@ class NewNodeForm extends Component {
         console.log(this.props.selectedPrereqs);
         let prereqList = this.props.selectedPrereqs.map(prereq => this.prereqInList(prereq));
         let selectedParent = this.parentNode(this.props.selectedParent);
+        let parentSelectionPane = this.parentSelectionPane(selectedParent);
         return (
             <form onSubmit={ this.handleSubmit}>
                 URI
@@ -83,12 +84,7 @@ class NewNodeForm extends Component {
                         Выбрать пререквезиты
                     </button>
                 </div>
-                <div>
-                    <h3>Выбранный раздел: {selectedParent}</h3>
-                    <button type="button" onClick={this.props.parentSelectionMode}>
-                        Поместить в раздел
-                    </button>
-                </div>
+                {parentSelectionPane}
                 <button type="button" onClick={this.props.normalMode}>
                     Отменить выбор
                 </button>
@@ -100,18 +96,31 @@ class NewNodeForm extends Component {
         )
     }
 
+    parentSelectionPane = (selectedParent) => {
+        let panestyle = this.props.childNodeForm ? style.parentSelectionPaneHidden : style.parentSelectionPane;
+        return (<div style={panestyle}>
+            <h3>Выбранный раздел: {selectedParent}</h3>
+            <button type="button" onClick={this.props.parentSelectionMode}>
+                Поместить в раздел
+            </button>
+        </div>)
+    };
 
     prereqInList = (prereq) => {
         return (<h5> {prereq.name}
         </h5>)
         ;
-    }
+    };
 
     parentNode = (parentUri) => {
         return (<h5> {parentUri}
         </h5>)
             ;
-    }
+    };
+
+    rootCheckBox = () => {
+        return (<input type="checkbox"/>);
+    };
 }
 
 

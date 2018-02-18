@@ -45,43 +45,47 @@ class TreeNode extends Component
         this.props.onToggle(this.props.node);
     }
 
+    childModeToggle = () => {
+        this.setState({childMode: !this.state.childMode});
+    };
+
     render()
     {
         if (this.props.node.children && this.props.node.children !==undefined)
         {
-            var children = this.props.node.children.map(node => {
-                return (
-                    <TreeNode
-                        getTreeViewMode = {this.props.getTreeViewMode}
-                        node={node}>
-                    </TreeNode>
-                )
-            });
+            var children = this.props.node.children.map(node => this.props.constructNode(node));
         }
         else {var children = []};
+        let childForm = this.newChildForm();
         //console.log(this.props.node);
         return(
-            <div>
+            <div style={style.subTree}>
                 <div style={this.getStyle()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
                     onClick={this.onToggle}>
                     <h3>{this.props.node.name}</h3>
                     <h5>uri : {this.props.node.uri}</h5>
                     <h5>Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}</h5>
+                    <button onClick={() => this.props.deleteNode(this.props.node.uri)}>Удалить</button>
                 </div>
             Подразделы:
                 <p style={{marginLeft:40}}>
                     {children}
+                        <button onClick={this.childModeToggle}>Создать подраздел</button>
+                    {childForm}
                 </p>
+
             </div>
         )
     }
 
     prereqInList = (prereq) => {
         return <div> uri: {prereq} </div>;
-    }
+    };
 
-    selectInfo = () => {
-        selectedPrereq = this.state.selectedAsPrereq
+    newChildForm = () => {
+        if (this.state.childMode) {
+            return this.props.childNodeForm(this.props.node.uri);
+        }
     }
 }
 

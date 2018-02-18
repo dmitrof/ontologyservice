@@ -20,7 +20,9 @@ module.exports.addNode = async function (req, res) {
     }
 };
 
+
 module.exports.removeNode = async function (req, res) {
+    console.log(req.body.node_uri);
     try {
         await Node.remove({uri : req.body.node_uri});
         res.json({message: 'node removed!', success: true});

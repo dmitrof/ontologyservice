@@ -19,6 +19,16 @@ const style = {
         border: '1px solid #A1A1A1',
         backgroundColor: '#ff5500'
     },
+    subTree: {
+        border: '3px solid #f1f1f1',
+        backgroundColor: '#ffffff'
+    },
+    parentSelectionPane: {
+        display: 'show'
+    },
+    parentSelectionPaneHidden: {
+        display: 'none'
+    },
     commentBox: {
         width: '80vw',
         margin: '0 auto',

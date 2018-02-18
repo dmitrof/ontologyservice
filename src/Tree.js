@@ -18,7 +18,6 @@ class Tree extends Component
         this.loadTree = this.loadTree.bind(this);
         this.addNode = this.addNode.bind(this);
         this.getStyle = this.getStyle.bind(this);
-        this.getMode = this.getMode.bind(this);
         this.pollInterval = null;
     }
 
@@ -58,7 +57,7 @@ class Tree extends Component
                 if (node.selected)
                     selectedPrereqs.push(node);
                 else {
-                    let index = selectedPrereqs.indexOf(node)
+                    let index = selectedPrereqs.indexOf(node);
                     if (index !== -1) selectedPrereqs.splice(index, 1);
                 }
             }
@@ -97,10 +96,15 @@ class Tree extends Component
         }).catch(err => console.log(err));
     };
 
-    getMode()
-    {
-        return this.state.mode;
-    }
+    deleteNode = (nodeUri) => {
+        console.log(nodeUri);
+        axios.post('http://localhost:3001/api/node/remove', {node_uri:nodeUri}).then(res => {
+            console.log(res);
+            this.loadTree();
+        }).catch(err => console.log(err));
+    };
+
+    getMode = () => this.state.mode;
 
     componentDidMount()
     {
@@ -120,12 +124,10 @@ class Tree extends Component
     render()
     {
         let rootNodes = this.state.tree.map(node => {
-            return this.constructNode(node, this.getMode,
-                this.state.nodesMap[node.uri].selected, this.toggleSelectNode)
+            return this.constructNode(node)
         });
 
-        let isolatedNodes = this.state.isolated.map(node => this.constructNode(node, this.getMode,
-            this.state.nodesMap[node.uri].selected, this.toggleSelectNode));
+        let isolatedNodes = this.state.isolated.map(node => this.constructNode(node));
         return (
             <div style={this.getStyle()}>
                 <div>
@@ -145,21 +147,30 @@ class Tree extends Component
                 </div>
             </div>
         )
-
-
     }
 
-    constructNode = function(node, mode, selected, toggle)
+    //Управление созданием нод должно быть у самого старшего элемента иерархии - "дерева"
+    constructNode = (node) =>
     {
         return (
             <TreeNode
                 node={node}
-                getTreeViewMode={mode}
-                selected={selected}
-                onToggle={toggle}>
+                getTreeViewMode={this.getMode}
+                selected={node.selected}
+                onToggle={this.toggleSelectNode}
+                childNodeForm={this.childNodeForm}
+                constructNode={this.constructNode}
+                deleteNode={this.deleteNode}>
             </TreeNode>
         )
     };
+
+    childNodeForm = (parentUri) => {
+        return <NewNodeForm domain_uri={this.state.domain.uri} addNode={this.addNode} prereqMode={this.prereqMode}
+                            normalMode={this.normalMode} parentSelectionMode={this.parentSelectiontMode}
+                            selectedPrereqs={this.state.selectedPrereqs} selectedParent={parentUri}
+                            childNodeForm={true}/>
+    }
 }
 
 

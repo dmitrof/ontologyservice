@@ -22,14 +22,13 @@ module.exports.getTree = async function(req, res)
         return;
     }
     try {
-        let [domain, flattenedTree, isolated] = await Promise.all([
+        let [domain, flattenedTree, domainNodes] = await Promise.all([
             Domain.findOne({uri: domain_uri}),
             GraphNode.getSubTree(domain_uri),
-            GraphNode.getIsolatedNodes(domain_uri)
+            GraphNode.find({domain_uri: domain_uri})
         ]);
 
-
-        let tree = unflattenTree(flattenedTree);
+        let [tree, isolated] = unflattenTree(flattenedTree, domainNodes);
         //let tree = flattenedTree;
         let res_data = {
             success: true,
@@ -100,8 +99,8 @@ module.exports.removeTree = async function(req, res)
     res.redirect('/api');
 };
 
-//todo rework
-unflattenTree = function(flattenedTree)
+//todo rework (here we can calculate isolated nodes)
+unflattenTree = function(flattenedTree, domainNodes)
 {
     let nodesMap = {};
     let nodes = [];
@@ -117,12 +116,19 @@ unflattenTree = function(flattenedTree)
         nodesMap[root.uri] = root;
         roots.push(root);
     }
-    for (let node of nodes) {
+    for (let node of nodes)
+    {
         if (helper.checkParam(node.parent_uri) && nodesMap.hasOwnProperty(node.parent_uri)) {
             nodesMap[node.parent_uri].children.push(node);
         }
     }
-    return roots;
+
+    Array.prototype.diff = function(a) {
+        return this.filter((node) => !a.hasOwnProperty(node.uri));
+    };
+
+    let isolated = domainNodes.diff(nodesMap);
+    return [roots, isolated];
 };
 
 module.exports.unflattenTree = unflattenTree;
