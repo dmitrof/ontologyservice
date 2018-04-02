@@ -120,8 +120,6 @@ class Tree extends Component {
 
     // indicates whether the node must be marked as unselectable (dull, inactive)
     isNodeUnselectable = (nodeUri) => {
-        console.log("isNOdeUnselectable: nodeUri=" + nodeUri + ", activeFormId=" + this.state.activeFormId +
-            "validPrereqs=" + this.state.validPrereqs);
         if (this.state.activeFormId === null)
             return false;
         else return (this.state.mode === treeMode.CHOOSEPARENT && this.state.validParents.indexOf(nodeUri) <= -1) ||

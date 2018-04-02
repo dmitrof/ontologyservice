@@ -29,8 +29,8 @@ class NewNodeForm extends Component {
         let description = this.state.description;
         let uri = this.state.uri;
         let domain_uri = this.props.domain_uri;
-        let parent_uri = this.state.root ? this.props.domain_uri : this.props.selectedParent;
-        console.log(domain_uri);
+        let parent_uri = (this.props.childNodeForm || !this.state.root) ? this.props.selectedParent : this.props.domain_uri;
+        console.log("NEW NODE: " + uri + "FOR PARENT " + parent_uri);
         this.props.tree.addNode({name: name, description: description, uri:uri, domain_uri:domain_uri, parent_uri: parent_uri,
             prereq_uris: this.props.selectedPrereqs});
     };

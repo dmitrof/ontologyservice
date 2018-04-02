@@ -1,4 +1,7 @@
 const style = {
+    DomainPane: {
+        border: '1px solid #818181',
+    },
     TreeNormal: {
         border: '1px solid #f1f1f1',
         backgroundColor: '#ffffff'
@@ -37,6 +40,32 @@ const style = {
         display: 'show',
         color: '#777777'
     },
+    deleteButton: {
+        cursor: 'pointer',
+        height: '20px',
+        width: '20px'
+    },
+    editButton: {
+        cursor: 'pointer',
+        height: '20px',
+        width: '20px'
+    },
+    ExpandButton: {
+        cursor: 'pointer',
+        fontSize: '15pt',
+        border: '2px solid #f1f1f1',
+    },
+    descriptionPane: {
+        fonsSize: '15pt',
+    },
+    childNodes: {
+        display : 'show'
+    },
+    childNodesHidden: {
+        display : 'none'
+    },
+
+
     commentBox: {
         width: '80vw',
         margin: '0 auto',
