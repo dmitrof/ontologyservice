@@ -23,7 +23,7 @@ router.get('/trees/subtree/:subtree_rooturi', treeController.getSubTree);
 router.post('/tree/addDomain', treeController.addDomain);
 router.post('/tree/removeDomain', treeController.removeDomain);
 router.post('/tree/removeTree', treeController.removeTree);
-router.post('/tree/editDomain', treeController.editDomain);
+router.post('/tree/updateDomain', treeController.editDomain);
 
 /**
  * Routes for node management

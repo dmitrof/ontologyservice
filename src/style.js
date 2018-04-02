@@ -19,6 +19,10 @@ const style = {
         border: '1px solid #A1A1A1',
         backgroundColor: '#ff5500'
     },
+    TreeNodeUnselectable: {
+        border: '1px solid #A1A1A1',
+        color: '#777777'
+    },
     subTree: {
         border: '3px solid #f1f1f1',
         backgroundColor: '#ffffff'
@@ -28,6 +32,10 @@ const style = {
     },
     parentSelectionPaneHidden: {
         display: 'none'
+    },
+    parentSelectionPaneInactive: {
+        display: 'show',
+        color: '#777777'
     },
     commentBox: {
         width: '80vw',

@@ -1,50 +1,28 @@
-/**
- * Created by Дмитрий on 20.11.2017.
- */
 import React, { Component} from 'react';
+import DomainForm from './DomainForm';
 
-class DomainForm extends Component
-{
+class EditDomainForm extends DomainForm {
     constructor(props) {
         super(props);
         this.state = {
-            name: this.props.name,
-            uri: this.props.uri,
-            description: this.props.description
-        };
+            name : this.props.domain.name,
+            description : this.props.domain.description
+        }
     }
 
     handleSubmit = (e) => {
         e.preventDefault();
         let name = this.state.name;
         let description = this.state.description;
-        let uri = this.state.uri;
-        this.props.onFormSubmit({name: name, description: description, uri:uri});
-        this.setState({name: name, description: description, uri:uri});
+        this.props.updateDomain({name: name, description: description, uri: this.props.domain.uri});
     };
 
-    handleNameChange = (e) => {
-        this.setState({ name: e.target.value });
-    };
-
-    handleDescriptionChange = (e) => {
-        this.setState({ description: e.target.value });
-    };
-
-    handleUriChange =(e) => {
-        this.setState({ uri: e.target.value });
-    };
 
     render() {
         return (
             <form onSubmit={ this.handleSubmit}>
-                URI
-                <input
-                    type='text'
-                    placeholder='URI'
-                    value={this.state.uri}
-                    onChange={ this.handleUriChange } />
-                <br/>
+                URI: {this.props.domain.uri}
+
                 Наименование области знаний
                 <input
                     type='text'
@@ -67,4 +45,4 @@ class DomainForm extends Component
     }
 }
 
-export default DomainForm;
+export default EditDomainForm;

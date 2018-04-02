@@ -14,12 +14,13 @@ class TreeNode extends Component
         this.onMouseOver = this.onMouseOver.bind(this);
         this.onMouseOut = this.onMouseOut.bind(this);
         this.onToggle = this.onToggle.bind(this);
-        this.state = {selected:false };
+        this.state = {selected:false, editing : false, editNodeForm : null};
     }
 
     getStyle() {
         let treeMode = this.props.getTreeViewMode();
-
+        if (this.props.isNodeUnselectable(this.props.node.uri))
+            return style.TreeNodeUnselectable;
         if (treeMode === treeModes.NORMAL) {
             return style.TreeNode;
         }
@@ -45,6 +46,13 @@ class TreeNode extends Component
         this.props.onToggle(this.props.node);
     }
 
+    editNode = () => {
+        let editing = !this.state.editing;
+        if (!editing)
+            this.props.normalMode();
+        this.setState({editing : editing});
+    };
+
     childModeToggle = () => {
         this.setState({childMode: !this.state.childMode});
     };
@@ -57,16 +65,25 @@ class TreeNode extends Component
         }
         else {var children = []};
         let childForm = this.newChildForm();
+        let editNodeForm = this.editNodeForm();
         //console.log(this.props.node);
         return(
             <div style={style.subTree}>
-                <div style={this.getStyle()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
-                    onClick={this.onToggle}>
-                    <h3>{this.props.node.name}</h3>
-                    <h5>uri : {this.props.node.uri}</h5>
-                    <h5>Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}</h5>
-                    <button onClick={() => this.props.deleteNode(this.props.node.uri)}>Удалить</button>
+                <div style={this.getStyle()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>
+                    <div onClick={this.onToggle}>
+                        <h3>{this.props.node.name}</h3>
+                        <h5>uri : {this.props.node.uri}</h5>
+                        <h5>Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}</h5>
+                    </div>
+                    <div>
+                        <button onClick={this.editNode}>Редактировать </button>
+                        <br/>
+                        {editNodeForm}
+                        <br/>
+                        <button onClick={() => this.props.deleteNode(this.props.node.uri)}>Удалить</button>
+                    </div>
                 </div>
+
             Подразделы:
                 <p style={{marginLeft:40}}>
                     {children}
@@ -86,6 +103,14 @@ class TreeNode extends Component
         if (this.state.childMode) {
             return this.props.childNodeForm(this.props.node.uri);
         }
+    };
+
+    editNodeForm = () => {
+        if (this.state.editNodeForm === null)
+            this.setState({editNodeForm: this.props.editNodeForm(this.props.node.uri)});
+
+        if (this.state.editing)
+            return this.props.editNodeForm(this.props.node.uri);
     }
 }
 

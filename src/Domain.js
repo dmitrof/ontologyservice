@@ -5,38 +5,48 @@ import React, { Component} from 'react';
 import axios from 'axios';
 import style from './style';
 import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
-import DomainForm from './DomainForm'
+import EditDomainForm from './EditDomainForm'
 
 class Domain extends Component
 {
     constructor(props) {
         super(props);
         console.log(this.props.domain.uri);
-        this.state = { domain: this.props.domain };
-        this.handleUpdate = this.handleUpdate.bind(this);
+        this.state = { editing: false};
     }
 
-    render()
-    {
+    editDomain = () => {
+        this.setState({editing: !this.state.editing})
+    };
+
+    render() {
         return (
                 <div>
                     <div>
-                        <h3>Область знаний: {this.state.domain.name}</h3>
-                        uri области: {this.state.domain.uri}
+                        <h3>Область знаний: {this.props.domain.name}</h3>
+                        uri области: {this.props.domain.uri}
                         <br/>
                         Описание:
-                        {this.state.domain.description}
+                        {this.props.domain.description}
                         <br/>
-                        <Link to={`/trees/${this.state.domain.uri}`}>Перейти</Link>
+                        <Link to={`/trees/${this.props.domain.uri}`}>Перейти</Link>
+                    </div>
+                    <div class="domainManagement">
+                        <button onClick={() => this.props.deleteTree(this.props.domain.uri)}>
+                            Удалить
+                        </button>
+                        <button onClick={this.editDomain}>
+                            Изменить
+                        </button>
+                        {this.editDomainForm()}
                     </div>
                 </div>
         )
     }
 
-    handleUpdate = function(newDomain)
-    {
-        axios.post('tree/editDomain', newDomain)
-            .then(res => console.log(res.data.message))
+    editDomainForm = () => {
+        if (this.state.editing)
+            return (<EditDomainForm domain={this.props.domain} updateDomain={this.props.updateDomain}/>)
     };
 }
 

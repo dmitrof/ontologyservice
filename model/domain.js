@@ -36,6 +36,13 @@ domainSchema.methods = {
 };
 
 domainSchema.statics = {
+    removeTree: function(domain_uri) {
+        return Promise.all([
+            Domain.remove({uri:domain_uri}),
+            Node.remove({domain_uri: this.uri})
+        ]);
+    },
+
     getByUri: function(uri) {
         return this.findOne({uri : uri}).exec();
     },

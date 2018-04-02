@@ -2,7 +2,6 @@ const Domain = require('./../model/domain').Domain;
 const GraphNode = require('./../model/gp_node').Node;
 const helper = require('./../controllers/controllerHelper');
 
-//todo нормальная обработка некорректных параметров (в мидлварь?)
 /**
  * Загрузка страницы с графом
  */
@@ -76,13 +75,13 @@ module.exports.addDomain = async function(req, res)
 
 module.exports.editDomain = async function(req, res)
 {
-    //if (helper.checkParam()
     try {
         let newDomainData = gatherDomainData(req);
-        await Domain.findOneAndUdate({uri: req.body.domain_uri}, {$set: newDomainData}, {upsert: true}, (doc, err) => {});
+        await Domain.findOneAndUpdate({uri: req.body.uri}, {$set: newDomainData}, {upsert: true}, (doc, err) => {});
         res.json({message: 'domain updated!', success: true});
     }
     catch (err) {
+        console.log(err);
         res.status(500).send(err);
     }
 };
@@ -95,8 +94,8 @@ module.exports.removeDomain = async function(req, res)
 
 module.exports.removeTree = async function(req, res)
 {
-    await Domain.removeTree(req.body.uri);
-    res.redirect('/api');
+    await Domain.removeTree(req.body.domainUri);
+    res.json({message: 'domain ' + req.body.domainUri + ' is deleted'});
 };
 
 //todo rework (here we can calculate isolated nodes)
