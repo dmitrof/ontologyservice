@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import axios from 'axios';
-import style from './style';
 import TreeNode from './TreeNode';
 import Domain from './Domain'
 import NewNodeForm from './NewNodeForm'
@@ -31,13 +30,13 @@ class Tree extends Component {
             validPrereqs: [],
             status: {}
         };
-        this.getStyle = this.getStyle.bind(this);
+        this.getClassName = this.getClassName.bind(this);
         this.pollInterval = null;
     }
 
     loadTree = () => {
         axios.get('http://localhost:3001/api/trees/'.concat(this.props.match.params.domain_uri)).then(res => {
-            console.log(res.data.domain);
+            //console.log(res.data.domain);
             let tree = res.data.tree;
             let nodesMap = {};
             for (let subTree of tree)
@@ -59,7 +58,6 @@ class Tree extends Component {
         }
     };
 
-    //todo удаление пререков
     toggleSelectNode = (selectedNode) => {
         console.log("activeFormId = " + this.state.activeFormId);
         let nodesMap = this.state.nodesMap;
@@ -86,7 +84,6 @@ class Tree extends Component {
             console.log("activeFormId=" + this.state.activeFormId +
                 " , selectedParent=" + formsMap[this.state.activeFormId].selectedParent +
                 " ,selectedPrereqs=" + formsMap[this.state.activeFormId].selectedPrereqs);
-            console.log(selectedParentUri);
             this.setState({nodesMap: nodesMap, formsMap: formsMap});
         }
     };
@@ -105,22 +102,23 @@ class Tree extends Component {
         console.log("prereqMode");
         let nodesMap = this.selectNodesForPredicate(activeFormId,
             (formData, nodeUri) => formData.selectedPrereqs.indexOf(nodeUri) > -1);
-        this.setState({mode: treeMode.CHOOSEPREREQ, activeFormId: activeFormId, nodesMap: nodesMap})
+        let validPrereqs = nodeUtils.getValidPrereqs(activeFormId, this.state.nodesMap);
+        this.setState({mode: treeMode.CHOOSEPREREQ, activeFormId: activeFormId, nodesMap: nodesMap, validPrereqs: validPrereqs})
     };
 
 
 //when editing prereqs of existing node
-    editPrereqMode = (editedNodeUri) => {
-        console.log("editedNodeUri = " + editedNodeUri);
-        let nodesMap = this.selectNodesForPredicate(editedNodeUri,
+    editPrereqMode = (activeFormId) => {
+        let nodesMap = this.selectNodesForPredicate(activeFormId,
             (formData, nodeUri) => formData.selectedPrereqs.indexOf(nodeUri) > -1);
-        let validPrereqs = nodeUtils.getValidPrereqs(editedNodeUri, this.state.nodesMap);
-        this.setState({mode: treeMode.CHOOSEPREREQ, activeFormId: editedNodeUri, validPrereqs: validPrereqs, nodesMap: nodesMap});
+        let validPrereqs = nodeUtils.getValidPrereqs(activeFormId, this.state.nodesMap);
+        this.setState({mode: treeMode.CHOOSEPREREQ, activeFormId: activeFormId, validPrereqs: validPrereqs, nodesMap: nodesMap});
     };
 
     // indicates whether the node must be marked as unselectable (dull, inactive)
     isNodeUnselectable = (nodeUri) => {
-        if (this.state.activeFormId === null)
+        console.log("iSNU: nodeUri=" + nodeUri + " activeFormId=" + this.state.activeFormId + " validPrereqs=" + this.state.validPrereqs);
+        if (this.state.activeFormId === null && this.state.activeFormId === Tree.rootFormId)
             return false;
         else return (this.state.mode === treeMode.CHOOSEPARENT && this.state.validParents.indexOf(nodeUri) <= -1) ||
             (this.state.mode === treeMode.CHOOSEPREREQ && this.state.validPrereqs.indexOf(nodeUri) <= -1);
@@ -128,15 +126,16 @@ class Tree extends Component {
 
     //when choosing parent for new node
     parentSelectiontMode = (activeFormId) => {
+        let validParents = nodeUtils.getValidParents(activeFormId, this.state.nodesMap);
         let nodesMap = this.selectNodesForPredicate(activeFormId, (formData, nodeUri) => formData.selectedParent === nodeUri);
-        this.setState({mode: treeMode.CHOOSEPARENT, activeFormId: activeFormId, nodesMap: nodesMap})
+        this.setState({mode: treeMode.CHOOSEPARENT, activeFormId: activeFormId, nodesMap: nodesMap, validParents: validParents})
     };
 
     //when editing parent for existing node
-    editParentMode = (editedNodeUri) => {
-        let nodesMap = this.selectNodesForPredicate(editedNodeUri, (formData, nodeUri) => formData.selectedParent === nodeUri);
-        let validParents = nodeUtils.getValidParents(editedNodeUri, this.state.nodesMap);
-        this.setState({mode: treeMode.CHOOSEPARENT, activeFormId: editedNodeUri, validParents: validParents, nodesMap: nodesMap});
+    editParentMode = (activeFormId) => {
+        let nodesMap = this.selectNodesForPredicate(activeFormId, (formData, nodeUri) => formData.selectedParent === nodeUri);
+        let validParents = nodeUtils.getValidParents(activeFormId, this.state.nodesMap);
+        this.setState({mode: treeMode.CHOOSEPARENT, activeFormId: activeFormId, validParents: validParents, nodesMap: nodesMap});
     };
 
     selectNodesForPredicate = (activeFormId, predicate) => {
@@ -178,11 +177,11 @@ class Tree extends Component {
         this.loadTree();
     }
 
-    getStyle() {
+    getClassName() {
         if (this.state.mode === treeMode.NORMAL)
-            return style.TreeNormal;
+            return 'treeNormal';
         else if (this.state.mode === treeMode.CHOOSEPREREQ)
-            return style.TreePrereq;
+            return 'treePrereq';
         /*else if (this.state.mode === treeMode.CHOOSEPARENT)
             return style.TreeChooseParent;*/
     }
@@ -194,18 +193,20 @@ class Tree extends Component {
 
         let isolatedNodes = this.state.isolated.map(node => this.constructNode(node));
         return (
-            <div style={this.getStyle()}>
+            <div className={this.getClassName()}>
                 <div>
                     <Domain domain={this.state.domain}/>
                 </div>
-                <div>
+                <div className="treePane">
                     {rootNodes}
                 </div>
-                <div>
+                    <div className="isolatedNodesPane">
+                        <h3>Изолированные разделы
+                            {isolatedNodes}
+                        </h3>
+                    </div>
                     <br/>
-                    <h3>Изолированные разделы
-                        {isolatedNodes}
-                    </h3>
+                <div className="treeManager">
                     <NewNodeForm formId={Tree.rootFormId} domain_uri={this.state.domain.uri} addNode={this.addNode}
                                  prereqMode={this.prereqMode}
                                  normalMode={this.normalMode} parentSelectionMode={this.parentSelectiontMode}
@@ -213,6 +214,7 @@ class Tree extends Component {
                                  selectedParent={this.state.formsMap[Tree.rootFormId].selectedParent}
                                  tree={this}/>
                 </div>
+
             </div>
         )
     }

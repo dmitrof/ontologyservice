@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import axios from 'axios';
-import style from './style';
 import Domain from './Domain'
 import DomainForm from './DomainForm'
 

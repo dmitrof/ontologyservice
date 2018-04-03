@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import style from './style';
 import NewNodeForm from "./NewNodeForm";
 
 class EditNodeForm extends NewNodeForm {
@@ -65,8 +64,9 @@ class EditNodeForm extends NewNodeForm {
     }
 
     parentSelectionPane = (selectedParent) => {
-        let panestyle = this.props.childNodeForm ? style.parentSelectionPaneHidden : style.parentSelectionPane;
-        return (<div style={panestyle}>
+        let className = this.props.childNodeForm ? 'parentSelectionPaneHidden' :
+            (this.state.root ? 'parentSelectionPaneInactive' : 'parentSelectionPane');
+        return (<div className={className}>
             <h3>Выбранный раздел: {selectedParent}</h3>
             <button type="button" onClick={() => this.props.tree.editParentMode(this.props.formId)}>
                 Поместить в раздел

@@ -3,10 +3,6 @@
  */
 
 import React, { Component } from 'react';
-import axios from 'axios';
-import style from './style';
-import TreeNode from './TreeNode';
-import Domain from './Domain'
 
 
 class NewNodeForm extends Component {
@@ -97,9 +93,9 @@ class NewNodeForm extends Component {
     }
 
     parentSelectionPane = (selectedParent) => {
-        let panestyle = this.props.childNodeForm ? style.parentSelectionPaneHidden :
-            (this.state.root ? style.parentSelectionPaneInactive : style.parentSelectionPane);
-        return (<div style={panestyle}>
+        let className = this.props.childNodeForm ? 'parentSelectionPaneHidden' :
+            (this.state.root ? 'parentSelectionPaneInactive' : 'parentSelectionPane');
+        return (<div className={className}>
             <h3>Выбранный раздел: {selectedParent}</h3>
             <button type="button" onClick={this.props.tree.parentSelectionMode}>
                 Поместить в раздел

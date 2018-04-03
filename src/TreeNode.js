@@ -2,8 +2,6 @@
  * Created by Дмитрий on 15.11.2017.
  */
 import React, { Component } from 'react';
-import axios from 'axios';
-import style from './style';
 import treeModes from './modes'
 
 class TreeNode extends Component
@@ -13,34 +11,25 @@ class TreeNode extends Component
         this.state = {selected:false, editing : false, editNodeForm : null, expand: true};
     }
 
-    getStyle = () => {
+    getClassName = () => {
         let treeMode = this.props.getTreeViewMode();
-        if (this.props.isNodeUnselectable(this.props.node.uri))
-            return style.TreeNodeUnselectable;
         if (treeMode === treeModes.NORMAL) {
-            return style.TreeNode;
+            return "treeNode";
         }
         else if (treeMode === treeModes.CHOOSEPREREQ || treeMode === treeModes.CHOOSEPARENT) {
-            if (this.state.hover)
-                return style.TreeNodePrereqHover;
+            if (this.props.isNodeUnselectable(this.props.node.uri))
+                return "treeNodeUnselectable";
             else if (this.props.selected)
-                return style.TreeNodeSelected;
+                return "treeNodeSelected";
+            else
+                return "treeNodeSelectable";
         }
-        //todo написать стили для selectedasparent и сделать мессаджи о том, для кого нода selected
     };
 
-    onMouseOver = () => {
-        this.setState({hover:true});
-    };
-
-    onMouseOut = () => {
-        this.setState({hover:false});
-    };
 
     onToggle = () => {
-    {
         this.props.onToggle(this.props.node);
-    }
+    };
 
     editNode = () => {
         let editing = !this.state.editing;
@@ -64,19 +53,19 @@ class TreeNode extends Component
         let editNodeForm = this.editNodeForm();
         console.log(this.state.expand);
         return(
-            <div style={style.subTree}>
-                <div style={this.getStyle()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>
+            <div class="subTree">
+                <div className={this.getClassName()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>
                     <div onClick={this.onToggle}>
                         <h3>{this.props.node.name}</h3>
                         <h5>uri : {this.props.node.uri}</h5>
                         <h5>Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}</h5>
                     </div>
                     <div>
-                        <img src="/edit.jpg" style={style.editButton} onClick={this.editNode}/>
+                        <img src="/edit.jpg" className='editButton' onClick={this.editNode}/>
                         <br/>
                         {editNodeForm}
                         <br/>
-                        <img src="/delete.png" style={style.deleteButton} onClick={() => this.props.deleteNode(this.props.node.uri)}/>
+                        <img src="/delete.png" className='deleteButton' onClick={() => this.props.deleteNode(this.props.node.uri)}/>
                     </div>
                 </div>
                 {this.expandButton()}
@@ -95,7 +84,7 @@ class TreeNode extends Component
 
     childrenExpansion = (children) => {
         if (this.state.expand)
-        return (<div style={this.state.expand ? style.childNodes : style.childNodesHidden}>
+        return (<div className={this.state.expand ? 'childNodes' : 'childNodesHidden'}>
             Подразделы:
             <p style={{marginLeft:40}}>
                 {children}
@@ -105,7 +94,7 @@ class TreeNode extends Component
 
     expandButton = () => {
         let text = this.state.expand ? "-" : "+";
-        return <div style={style.ExpandButton} onClick={this.expand}>{text}</div>
+        return <div className='expandButton' onClick={this.expand}>{text}</div>
     };
 
     expand = () => {

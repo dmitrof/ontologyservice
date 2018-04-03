@@ -1,0 +1,100 @@
+a {
+    color: red;
+}
+
+
+
+
+.domainPane {
+    border: 1px solid #818181;
+}
+
+.domainPane:hover {
+    background-color:  #DDDDDD;
+}
+.treeNormal {
+    overflow: hidden;
+    border: 1px solid #f1f1f1;
+    background-color: #ffffff;
+}
+
+.treePrereq {
+    border: 1px solid #f1f1f1;
+    background-color: #DDDDDD;
+}
+.treePane {
+    display: table-cell;
+    width: 100%;
+    border: 3px solid #444444;
+}
+.isolatedNodesPane {
+    display: table-cell;
+    overflow:hidden;
+    padding-left: 2%;
+    padding-right: 2%;
+    border: 3px solid #444444;
+}
+
+.treeManager {
+    display: inline-block;
+    float: bottom;
+}
+
+
+.treeNode {
+    border: 1px solid #A1A1A1;
+    background-color: #ffffff;
+}
+
+.treeNodeSelectable:hover {
+    background-color: #55ff55;
+}
+
+.treeNodeSelected {
+    background-color: #ff5500;
+}
+.treeNodeSelected:hover {
+    background-color: #55ff55;
+}
+.treeNodeUnselectable {
+    border: 1px solid #A1A1A1;
+    color: #777777;
+}
+.subTree {
+    border: 3px solid #f1f1f1;
+    background-color: #ffffff;
+}
+.parentSelectionPane {
+    display: inline;
+}
+.parentSelectionPaneHidden {
+    display: none;
+}
+.parentSelectionPaneInactive {
+    display: inline;
+    color: #777777;
+}
+.deleteButton {
+    cursor: pointer;
+    height: 20px;
+    width: 20px
+}
+.editButton {
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+.expandButton {
+    cursor: pointer;
+    font-size: 15pt;
+    border: 2px solid #f1f1f1;
+}
+.descriptionPane {
+    font-size: 15pt;
+}
+.childNodes {
+    display: inline;
+}
+.childNodesHidden {
+    display: none;
+}
