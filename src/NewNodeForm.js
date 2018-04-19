@@ -16,7 +16,6 @@ class NewNodeForm extends Component {
             root : true,
         };
         console.log(this.props.domain_uri);
-
     }
 
     handleSubmit = (e) => {
@@ -51,43 +50,51 @@ class NewNodeForm extends Component {
         let selectedParent = this.parentNode(this.props.selectedParent);
         let parentSelectionPane = this.parentSelectionPane(selectedParent);
         return (
-            <form onSubmit={ this.handleSubmit}>
-                URI
-                <input
-                    type='text'
-                    placeholder='URI'
-                    value={this.state.uri}
-                    onChange={ this.handleUriChange } />
-                <br/>
-                Наименование области знаний
-                <input
-                    type='text'
-                    placeholder='Название'
-                    value={this.state.name}
-                    onChange={ this.handleNameChange } />
-                <br/>
-                Описание области знаний
-                <input
-                    type='text'
-                    placeholder='Описание'
-                    value={this.state.description}
-                    onChange={ this.handleDescriptionChange } />
-                <br/>
-                <div>
+            <form className="nodeForm" onSubmit={ this.handleSubmit}>
+                <div className="newNodeTextData">
+                    <div className="formTextDataEntry">
+                        <label>URI</label>
+                        <input
+                            type='text'
+                            placeholder='URI'
+                            value={this.state.uri}
+                            onChange={ this.handleUriChange } />
+                    </div>
+                    <div className="formTextDataEntry">
+                        <label>Наименование области знаний</label>
+                        <input
+                            type='text'
+                            placeholder='Название'
+                            value={this.state.name}
+                            onChange={ this.handleNameChange } />
+                    </div>
+                    <div className="formTextDataEntry">
+                        <label>Описание области знаний</label>
+                        <input
+                            type='text'
+                            placeholder='Описание'
+                            value={this.state.description}
+                            onChange={ this.handleDescriptionChange } />
+                    </div>
+                </div>
+
+                <div className="prereqPane">
                     <h3>Выбранные пререквизиты: {prereqList}</h3>
                     <button type="button" onClick={() => this.props.tree.prereqMode(this.props.formId)}>
                         Выбрать пререквезиты
                     </button>
                 </div>
-                {this.rootCheckBox()}
-                {parentSelectionPane}
-                <button type="button" onClick={() => this.props.tree.normalMode(this.props.formId)}>
-                    Отменить выбор
-                </button>
-                <br/>
-                <input
-                    type='submit'
-                    value='Post'/>
+                <div className="parentPane">
+                    {this.rootCheckBox()}
+                    {parentSelectionPane}
+                </div>
+
+                <div className="submitNodeButton">
+                    <input className="submitNodeButton"
+                           type='submit'
+                           value='Подтвердить'/>
+                </div>
+
             </form>
         )
     }
@@ -97,11 +104,12 @@ class NewNodeForm extends Component {
             (this.state.root ? 'parentSelectionPaneInactive' : 'parentSelectionPane');
         return (<div className={className}>
             <h3>Выбранный раздел: {selectedParent}</h3>
-            <button type="button" onClick={this.props.tree.parentSelectionMode}>
+            <button type="button" disabled={className === 'parentSelectionPaneInactive'} onClick={() => this.props.tree.parentSelectionMode(this.props.formId)}>
                 Поместить в раздел
             </button>
         </div>)
     };
+
 
 
     parentNode = (parentUri) => {

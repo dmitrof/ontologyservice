@@ -14,7 +14,7 @@ mongoose.connect(mongoDB, {
 //Кол-во прямых потомков каждой вершины
 const branchingFactor = 2;
 //Количество уровней (ярусов)
-const nlevels = 1;
+const nlevels = 7;
 //Число изолированных вершин
 const isolatedCount = 1;
 
@@ -94,7 +94,7 @@ generateTreeLevel = function(domainUri, previousLevel, allNodes, levelNumber, br
     {
         for (let i = 1; i <= branchingFactor; i++)
         {
-            let node_uri = domainUri.concat('_').concat(levelNumber).concat('_').concat(++index);
+            let node_uri = parent.uri.concat('_').concat(i);
             let node = constructNode(node_uri, domainUri);
             node.parent_uri = parent.uri;
             node.prereq_uris = getRandomPrereqs(allNodes, 3);

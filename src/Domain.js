@@ -23,7 +23,7 @@ class Domain extends Component
                 <div className="domainPane">
                     <div>
                         <h3 className="domainName">{this.props.domain.name}</h3>
-                        {this.expandButton()}
+                        {/*{this.expandButton()}*/}
                         {this.descriptionPane()}
                         <Link to={`/trees/${this.props.domain.uri}`}>Перейти</Link>
                     </div>

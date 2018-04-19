@@ -1,28 +1,27 @@
 /**
  * Created by Дмитрий on 15.11.2017.
  */
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import treeModes from './modes'
 
-class TreeNode extends Component
-{
+class TreeNode extends Component {
     constructor(props) {
         super(props);
-        this.state = {selected:false, editing : false, editNodeForm : null, expand: true};
+        this.state = {selected: false, editing: false, editNodeForm: null, expand: true, expandInfo: false};
     }
 
     getClassName = () => {
         let treeMode = this.props.getTreeViewMode();
         if (treeMode === treeModes.NORMAL) {
-            return "treeNode";
+            return "nodePresentation";
         }
         else if (treeMode === treeModes.CHOOSEPREREQ || treeMode === treeModes.CHOOSEPARENT) {
             if (this.props.isNodeUnselectable(this.props.node.uri))
-                return "treeNodeUnselectable";
+                return "nodePresentationUnselectable";
             else if (this.props.selected)
-                return "treeNodeSelected";
+                return "nodePresentationSelected";
             else
-                return "treeNodeSelectable";
+                return "nodePresentation";
         }
     };
 
@@ -35,70 +34,90 @@ class TreeNode extends Component
         let editing = !this.state.editing;
         if (!editing)
             this.props.normalMode();
-        this.setState({editing : editing});
+        this.setState({editing: editing});
     };
 
     childModeToggle = () => {
         this.setState({childMode: !this.state.childMode});
     };
 
-    render()
-    {
-        if (this.props.node.children && this.props.node.children !==undefined)
-        {
+    render() {
+        if (this.props.node.children && this.props.node.children !== undefined) {
             var children = this.props.node.children.map(node => this.props.constructNode(node));
         }
-        else {var children = []};
+        else {
+            var children = []
+        }
+        ;
         let childForm = this.newChildForm();
         let editNodeForm = this.editNodeForm();
         console.log(this.state.expand);
-        return(
-            <div class="subTree">
-                <div className={this.getClassName()} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>
-                    <div onClick={this.onToggle}>
-                        <h3>{this.props.node.name}</h3>
-                        <h5>uri : {this.props.node.uri}</h5>
-                        <h5>Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}</h5>
+        return (
+            <div className="subTree">
+                <div className="treeNode">
+                    <div >
+                        <div className={this.getClassName()} onClick={this.onToggle} onMouseOver={this.onMouseOver}
+                             onMouseOut={this.onMouseOut}>
+                            <div>
+                                {this.expandButton(this.expand, this.state.expand)}
+                            </div>
+                            <div className='nodeTitle'>
+                                {this.props.node.name}
+                            </div>
+                            <div className='nodeManagement'>
+                                <img src="/see.png" className='nodeDescriptionButton' onClick={this.expandInfo}/>
+                                <img src="/edit.jpg" className='editButton' onClick={this.editNode}/>
+                                <img src="/delete.png" className='deleteButton'
+                                     onClick={() => this.props.deleteNode(this.props.node.uri)}/>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <img src="/edit.jpg" className='editButton' onClick={this.editNode}/>
-                        <br/>
+                    <div className='nodeDescription'>
+                        {this.nodeInfoExpansion()}
+                    </div>
+                    <div className="editNodeForm">
                         {editNodeForm}
-                        <br/>
-                        <img src="/delete.png" className='deleteButton' onClick={() => this.props.deleteNode(this.props.node.uri)}/>
+                    </div>
+                    <div className="childrenPane">
+                        {this.childrenExpansion(children)}
+                        <button onClick={this.childModeToggle}>Создать подраздел</button>
+                        {this.state.childMode ? childForm : ''}
                     </div>
                 </div>
-                {this.expandButton()}
-                <div className="childrenPane">
-                    {this.childrenExpansion(children)}
-                    <button onClick={this.childModeToggle}>Создать подраздел</button>
-                    {childForm}
-                </div>
-
-
-
-
             </div>
         )
     }
 
     childrenExpansion = (children) => {
         if (this.state.expand)
-        return (<div className={this.state.expand ? 'childNodes' : 'childNodesHidden'}>
-            Подразделы:
-            <p style={{marginLeft:40}}>
+            return (<div className={this.state.expand ? 'childNodes' : 'childNodesHidden'}>
                 {children}
-            </p>
-        </div>)
+            </div>)
     };
 
-    expandButton = () => {
-        let text = this.state.expand ? "-" : "+";
-        return <div className='expandButton' onClick={this.expand}>{text}</div>
+    nodeInfoExpansion = () => {
+        if (this.state.expandInfo)
+            return (<div>
+                uri : {this.props.node.uri}
+                <div className='nodeDescription'>
+                    Описание : <br/> {this.props.node.description}
+                </div>
+                Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}
+            </div>)
     };
+
+    expandButton = (cb, predicate, postfix) => {
+        let text = (predicate ? "- " : "+ ") + (postfix ? postfix : '');
+        return <div className='nodeExpandButton' onClick={cb}>{text}</div>
+    };
+
 
     expand = () => {
         this.setState({expand: !this.state.expand});
+    };
+
+    expandInfo = () => {
+        this.setState({expandInfo: !this.state.expandInfo});
     };
 
     prereqInList = (prereq) => {

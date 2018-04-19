@@ -2,25 +2,19 @@
  * Created by Дмитрий on 11.02.2018.
  */
 
-//TODO: поместить в ALS libs
-//TODO написать тесты
-
-let validateParent = (parentUri, node, nodesMap) => {
-        if (node.children.length === 0)
-            return true;
-        else return validateParentRec(parentUri, node, nodesMap)
-    };
-
-let validateParentRec = (parentUri, node, nodesMap) => {
-    let grandParentUri = nodesMap[parentUri].parent_uri;
-    if (grandParentUri === node.uri)
+let validateParentRec = (nodeUri, parentCandidate, nodesMap) => {
+    if (parentCandidate.uri === nodeUri)
         return false;
-    if (grandParentUri in nodesMap)
-    {
-        return validateParentRec(grandParentUri, node, nodesMap);
-    }
     else
-        return true;
+    {
+        let grandParent = nodesMap[parentCandidate.parent_uri];
+        if (grandParent && grandParent.uri in nodesMap)
+        {
+            return validateParentRec(nodeUri, grandParent, nodesMap);
+        }
+        else
+            return true;
+    }
 };
 
 let validatePrereq = (nodeUri, prereq, nodesMap) => {
@@ -71,7 +65,7 @@ let getValidParents = (node_uri, nodesMap) => {
     let validParentUris = [];
     for (let candidate_uri in nodesMap)
     {
-        if (nodesMap.hasOwnProperty(candidate_uri) && validateParent(node_uri, nodesMap[candidate_uri], nodesMap))
+        if (nodesMap.hasOwnProperty(candidate_uri) && validateParentRec(node_uri, nodesMap[candidate_uri], nodesMap))
             validParentUris.push(candidate_uri);
     }
     return validParentUris;
@@ -79,7 +73,6 @@ let getValidParents = (node_uri, nodesMap) => {
 
 const nodeUtils = {
     validatePrereq : validatePrereq,
-    validateParent : validateParent,
     getValidParents : getValidParents,
     getValidPrereqs : getValidPrereqs,
 };

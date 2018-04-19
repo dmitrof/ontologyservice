@@ -2,11 +2,13 @@ a {
     color: red;
 }
 
-
-
-
 .domainPane {
+    display: block;
     border: 1px solid #818181;
+}
+
+.domainName {
+    display: block;
 }
 
 .domainPane:hover {
@@ -14,6 +16,7 @@ a {
 }
 .treeNormal {
     overflow: hidden;
+    width: 100%;
     border: 1px solid #f1f1f1;
     background-color: #ffffff;
 }
@@ -23,9 +26,11 @@ a {
     background-color: #DDDDDD;
 }
 .treePane {
-    display: table-cell;
-    width: 100%;
+    display: inline-block;
+    position:relative;
+    width: 90%;
     border: 3px solid #444444;
+    overflow-x: scroll;
 }
 .isolatedNodesPane {
     display: table-cell;
@@ -40,30 +45,6 @@ a {
     float: bottom;
 }
 
-
-.treeNode {
-    border: 1px solid #A1A1A1;
-    background-color: #ffffff;
-}
-
-.treeNodeSelectable:hover {
-    background-color: #55ff55;
-}
-
-.treeNodeSelected {
-    background-color: #ff5500;
-}
-.treeNodeSelected:hover {
-    background-color: #55ff55;
-}
-.treeNodeUnselectable {
-    border: 1px solid #A1A1A1;
-    color: #777777;
-}
-.subTree {
-    border: 3px solid #f1f1f1;
-    background-color: #ffffff;
-}
 .parentSelectionPane {
     display: inline;
 }
@@ -74,6 +55,11 @@ a {
     display: inline;
     color: #777777;
 }
+
+button:disabled {
+    color:#A1A1A1;
+}
+
 .deleteButton {
     cursor: pointer;
     height: 20px;
@@ -84,13 +70,16 @@ a {
     height: 20px;
     width: 20px;
 }
-.expandButton {
+
+.nodeDescriptionButton {
     cursor: pointer;
-    font-size: 15pt;
-    border: 2px solid #f1f1f1;
+    height: 20px;
+    width: 20px;
 }
+
 .descriptionPane {
     font-size: 15pt;
+    display: block;
 }
 .childNodes {
     display: inline;
@@ -98,3 +87,252 @@ a {
 .childNodesHidden {
     display: none;
 }
+
+.treeManagementPane {
+    position: fixed;
+    background-color: #DDDDDD;
+    width:100%;
+    left:0px;
+    bottom:0px;
+    height:auto;
+    min-height: 60px;
+    padding:auto;
+    margin:auto;
+}
+
+.addNewNodeButton {
+    display: block;
+    float: right;
+    top: 50%;
+    right: 2%;
+    position: absolute;
+    transform: translateY(-50%);
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+    background-color: darkgreen;
+    border-radius:50%;
+    margin:auto;
+}
+
+.addNewNodeButton p {
+    text-align: center;
+    position: absolute;
+    margin:auto;
+    font: 40px "Comic Sans MS";
+    color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.addNewNodeButton:hover {
+    background-color: #55ff55;
+}
+
+.addNewNodeButton:hover::after {
+    content: attr(dataTitle);
+    position: absolute;
+    left:20%; top: -30px;
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(255,255,230,0.9); /* Полупрозрачный цвет фона */
+    font-family: Arial, sans-serif; /* Гарнитура шрифта */
+    font-size: 11px; /* Размер текста подсказки */
+    padding: 5px 10px; /* Поля */
+    border: 1px solid #333; /* Параметры рамки */
+    color: black;
+}
+
+.newNodeForm div {
+    padding-top: 5px;
+    margin-left: 5px;
+}
+
+.editNodeForm {
+    display: inline-block;
+    padding-top: 5px;
+    margin-left: 5px;
+}
+
+.newNodeTextData {
+    display:inline-block;
+    float:left;
+}
+
+.formTextDataEntry {
+   display:block;
+}
+
+.formTextDataEntry label {
+    display: inline-block;
+    width: 250px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.prereqPane {
+    display: inline-block;
+    float:left;
+}
+
+.parentPane {
+    display: inline-block;
+    float:left;
+}
+
+
+
+.submitNodeButton {
+    display: inline-block;
+    float: left;
+    border-radius: 20%;
+    color: white;
+    background-color: darkgreen;
+    position: relative;
+    top: 20%;
+    font-size: 15pt;
+}
+
+.submitNodeButton:hover {
+    background-color: #55ff55;
+}
+
+.submitNodeButton:active{
+    background-color: #ff5500;
+}
+
+.nodeForm {
+    display: inline-block;
+}
+
+.nodeForm div {
+    margin-left: 5px;
+}
+
+/* TreeNode sub elements */
+.subTree {
+    display: inline-block;
+    position:relative;
+    float: left;
+    clear: left;
+    border: 3px solid #919191;
+    background-color: #ffffff;
+    width: 800px;
+}
+
+.subTree .subTree {
+    margin-left: 40px;
+}
+
+.treeNode {
+    position:relative;
+}
+
+
+.nodePresentation, .nodePresentationSelected {
+    display: inline-block;
+    position:relative;
+    float:left;
+    width: 100%;
+    min-width: 60%;
+    border : 1px #555555 solid;
+    border-radius:9%;
+}
+
+.nodePresentation {
+    background-color: darkseagreen;
+    color: #111111;
+}
+.nodePresentation:hover {
+    background-color: #A5F6B8;
+}
+
+.nodePresentationSelected {
+    color: white;
+    background-color: #190566
+}
+
+.nodePresentationSelected:hover {
+    color: white;
+    background-color: #39248D
+}
+
+
+.nodeTitle {
+    display: inline-block;
+    float: left;
+    font : 20pt Arial darkslategray;
+    line-height: 2;
+    padding-left: 10px;
+    margin-right: 40px;
+    border : 1px blue solid;
+    word-wrap: break-word;
+    max-width : 80%;
+}
+
+.expandButton {
+    display: inline;
+    cursor: pointer;
+    font-size: 16pt;
+    text-align: center;
+    vertical-align: middle;
+    border: 2px green solid;
+    width: 5%;
+}
+
+.nodeExpandButton {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 32pt;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+    border: 2px green solid;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.nodeManagement {
+    display: inline;
+    position: absolute;
+    float: right;
+    top: 5%;
+    right:2%;
+    overflow:hidden;
+    border: 1px solid yellow;
+}
+
+.nodeManagement img {
+    margin-left: 5px;
+}
+
+.nodeDescription {
+    font: 14pt black;
+    line-height: 2;
+    padding-left: 15px;
+    padding-right: 15px;
+    border : 1px #A1A1A1 solid;
+    display: inline-block;
+    float: left;
+    clear: left;
+}
+
+.childrenPane {
+    display: inline-block;
+    float: left;
+    clear: left;
+}
+
+.treeNodeDescription {
+    display: block;
+    font: 14pt black;
+}
+
+.treeNodeDescriptionHidden {
+    display: none;
+}
+
+
+
+
