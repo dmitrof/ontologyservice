@@ -2,14 +2,17 @@
  * Created by Дмитрий on 15.11.2017.
  */
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom'
 import axios from 'axios';
 import TreeNode from './TreeNode';
 import Domain from './Domain'
 import NewNodeForm from './NewNodeForm'
 import EditNodeForm from './EditNodeForm'
+import ChildNodeForm from './ChildNodeForm'
 import treeMode from './modes'
 import nodeUtils from './nodeUtils'
 import TreeManagementPane from './TreeManagementPane'
+import StatusPane from './StatusPane'
 
 
 class Tree extends Component {
@@ -29,7 +32,9 @@ class Tree extends Component {
             activeFormId: null,
             validParents: [],
             validPrereqs: [],
-            status: {}
+            status: {},
+            nodeRefs: {},
+            uiMessage: ''
         };
         this.getClassName = this.getClassName.bind(this);
         this.pollInterval = null;
@@ -54,9 +59,10 @@ class Tree extends Component {
     fillNodesMap = (treeNode, nodesMap) => {
         treeNode.selected = false;
         nodesMap[treeNode.uri] = treeNode;
-        for (let childNode of treeNode.children) {
-            this.fillNodesMap(childNode, nodesMap);
-        }
+        if (treeNode.children)
+            for (let childNode of treeNode.children) {
+                this.fillNodesMap(childNode, nodesMap);
+            }
     };
 
     toggleSelectNode = (selectedNode) => {
@@ -93,6 +99,7 @@ class Tree extends Component {
         console.log("going to normal mode");
         let nodesMap = this.selectNodesForPredicate(null, () => false);
         this.setState({
+            uiMessage: '',
             mode: treeMode.NORMAL, nodesMap: nodesMap, selectedPrereqs: [],
             validParents: [], validPrereqs: []
         });
@@ -111,14 +118,17 @@ class Tree extends Component {
         let nodesMap = this.selectNodesForPredicate(activeFormId,
             (formData, nodeUri) => formData.selectedPrereqs.indexOf(nodeUri) > -1);
         let validPrereqs = nodeUtils.getValidPrereqs(activeFormId, this.state.nodesMap);
-        this.setState({mode: treeMode.CHOOSEPREREQ, activeFormId: activeFormId, nodesMap: nodesMap, validPrereqs: validPrereqs})
+        let uiMessage = "Выберите компетенции, требуемые для усвоения темы " + activeFormId;
+        console.log(uiMessage);
+        this.setState({mode: treeMode.CHOOSEPREREQ, uiMessage: uiMessage,
+            activeFormId: activeFormId, nodesMap: nodesMap, validPrereqs: validPrereqs})
     };
 
 
 
     // indicates whether the node must be marked as unselectable (dull, inactive)
     isNodeUnselectable = (nodeUri) => {
-        console.log("iSNU: nodeUri=" + nodeUri + " activeFormId=" + this.state.activeFormId + " validPrereqs=" + this.state.validPrereqs);
+        //console.log("iSNU: nodeUri=" + nodeUri + " activeFormId=" + this.state.activeFormId + " validPrereqs=" + this.state.validPrereqs);
         if (this.state.activeFormId === null && this.state.activeFormId === Tree.rootFormId)
             return false;
         else return (this.state.mode === treeMode.CHOOSEPARENT && this.state.validParents.indexOf(nodeUri) <= -1) ||
@@ -132,8 +142,10 @@ class Tree extends Component {
             return;
         }
         let validParents = nodeUtils.getValidParents(activeFormId, this.state.nodesMap);
+        let uiMessage = "Выберите раздел, в который надо поместить тему " + activeFormId;
         let nodesMap = this.selectNodesForPredicate(activeFormId, (formData, nodeUri) => formData.selectedParent === nodeUri);
-        this.setState({mode: treeMode.CHOOSEPARENT, activeFormId: activeFormId, nodesMap: nodesMap, validParents: validParents})
+        this.setState({mode: treeMode.CHOOSEPARENT, uiMessage: uiMessage, activeFormId: activeFormId,
+            nodesMap: nodesMap, validParents: validParents})
     };
 
 
@@ -151,6 +163,7 @@ class Tree extends Component {
     addNode = (params) => {
         axios.post('http://localhost:3001/api/node/add', params).then(res => {
             console.log(res);
+            this.setState({serverResponse: res.data.message});
             this.loadTree();
         }).catch(err => console.log(err));
     };
@@ -158,6 +171,7 @@ class Tree extends Component {
     updateNode = (params) => {
         axios.post('http://localhost:3001/api/node/update', params).then(res => {
             console.log(res);
+            this.setState({serverResponse: res.data.message});
             this.loadTree();
         }).catch(err => console.log(err));
     };
@@ -166,6 +180,7 @@ class Tree extends Component {
         console.log(nodeUri);
         axios.post('http://localhost:3001/api/node/remove', {node_uri: nodeUri}).then(res => {
             console.log(res);
+            this.setState({serverResponse: res.data.message});
             this.loadTree();
         }).catch(err => console.log(err));
     };
@@ -189,33 +204,39 @@ class Tree extends Component {
         let rootNodes = this.state.tree.map(node => {
             return this.constructNode(node)
         });
-
+        console.log(this.state.uiMessage)
         let isolatedNodes = this.state.isolated.map(node => this.constructNode(node));
         return (
-            <div className={this.getClassName()}>
-                <div>
-                    <Domain domain={this.state.domain}/>
-                </div>
-                <div className="treePane">
-                    {rootNodes}
-                </div>
+            <div className="treeContainer">
+                <div className={this.getClassName()}>
+                    <div>
+                        <Domain domain={this.state.domain}/>
+                    </div>
+                    <div className="treePane">
+                        {rootNodes}
+                    </div>
                     <div className="isolatedNodesPane">
                         <h3>Изолированные разделы
                             {isolatedNodes}
                         </h3>
                     </div>
                     <br/>
-                <TreeManagementPane newNodeForm={this.newNodeForm} UIMessage={null} serverResponse={null} tree={this}/>
-
+                    {/*<TreeManagementPane newNodeForm={this.newNodeForm} UIMessage={null} serverResponse={null} tree={this}/>*/}
+                    <StatusPane serverResponse={this.state.serverResponse}
+                                uiMessage={this.state.uiMessage}/>
+                </div>
             </div>
+
         )
     }
 
     //Управление созданием нод должно быть у самого старшего элемента иерархии - "дерева"
     constructNode = (node) => {
+        let nodeRef = React.createRef();
         return (
             <TreeNode
                 node={node}
+                nodeRef={nodeRef}
                 getTreeViewMode={this.getMode}
                 selected={node.selected}
                 onToggle={this.toggleSelectNode}
@@ -225,6 +246,7 @@ class Tree extends Component {
                 deleteNode={this.deleteNode}
                 isNodeUnselectable={this.isNodeUnselectable}
                 normalMode={this.normalMode}
+                tree={this}
             >
             </TreeNode>
         )
@@ -238,7 +260,7 @@ class Tree extends Component {
             this.state.formsMap[formId] = {selectedPrereqs: [], selectedParent: parentUri};
 
         let selectedPrereqsUris = this.state.formsMap[formId].selectedPrereqs;
-        return <NewNodeForm formId={formId} domain_uri={this.state.domain.uri}
+        return <ChildNodeForm formId={formId} domain_uri={this.state.domain.uri}
                             selectedPrereqs={selectedPrereqsUris} selectedParent={parentUri}
                             childNodeForm={true}
                             tree={this}/>
@@ -279,10 +301,28 @@ class Tree extends Component {
 
 
     prereqInList = (formId, prereqUri) => {
-        return (<h5> {this.state.nodesMap[prereqUri].name}
-            <div onClick={() => this.deletePrereqFromList(formId, prereqUri)}>X</div>
-        </h5>)
-            ;
+        let node = this.state.nodesMap[prereqUri];
+        if (node)
+        {
+            return (<h5> {this.state.nodesMap[prereqUri].name}
+                <div onClick={() => this.deletePrereqFromList(formId, prereqUri)}>X</div>
+            </h5>)
+                ;
+        }
+    };
+
+    scrollToNode = (nodeRef) => {
+        const element = ReactDOM.findDOMNode(this.refs[nodeRef]);
+        console.log(this.refs);
+        window.scrollTo(0, element.offsetTop);
+    };
+
+    requiredPrereqLink = (prereqUri, nodeRef) => {
+        let prereq = this.state.nodesMap[prereqUri];
+        if (prereq)
+        {
+            return <div className='requiredPrereq' onClick={() => this.scrollToNode(prereq.uri)}>{prereq.name}</div>
+        }
     };
 
     isNormalMode = () =>

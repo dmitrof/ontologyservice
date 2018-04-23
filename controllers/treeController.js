@@ -26,12 +26,12 @@ module.exports.getTree = async function(req, res)
             GraphNode.getSubTree(domain_uri),
             GraphNode.find({domain_uri: domain_uri})
         ]);
-
+        let redirectMessage = req.params.redirectMessage;
         let [tree, isolated] = unflattenTree(flattenedTree, domainNodes);
         //let tree = flattenedTree;
         let res_data = {
             success: true,
-            message : 'tree ' + domain_uri + 'is successfully fetched',
+            message : redirectMessage ? redirectMessage : null,
             domain : domain,
             tree : tree,
             isolated: isolated

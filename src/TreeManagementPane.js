@@ -21,8 +21,6 @@ class TreeManagementPane extends Component
     render() {
         return (
                 <div className='treeManagementPane'>
-                    <StatusPane serverResponse={this.props.serverResponse}
-                                uiMessage={this.props.UIMessage}/>
                     {this.state.showNodeForm ? this.props.newNodeForm() : null}
                     <button type="button" style={this.props.tree.isNormalMode()? {display:'none'} : {display:'show'}}
                             onClick={() => this.props.tree.normalMode(this.props.formId)}>
@@ -34,15 +32,6 @@ class TreeManagementPane extends Component
         )
     }
 }
-
-const StatusPane = ({serverResponse}, {UIMessage}) => {
-    return (
-        <div className="statusPane">
-            {serverResponse ? serverResponse + '<br/>' : null}
-            {UIMessage ? UIMessage + '<br/>' : null}
-        </div>
-    )
-};
 
 
 export default TreeManagementPane;

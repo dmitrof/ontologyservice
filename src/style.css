@@ -14,6 +14,14 @@ a {
 .domainPane:hover {
     background-color:  #DDDDDD;
 }
+
+.treeContainer {
+    display: inline-block;
+    overflow: scroll;
+    width: 100%;
+    float: left;
+}
+
 .treeNormal {
     overflow: hidden;
     width: 100%;
@@ -60,21 +68,25 @@ button:disabled {
     color:#A1A1A1;
 }
 
+.deleteButton, .editButton, .newChildNodeButton, .nodeDescriptionButton {
+    height: 25px;
+    width: 25px
+}
+
 .deleteButton {
     cursor: pointer;
-    height: 20px;
-    width: 20px
+
 }
 .editButton {
     cursor: pointer;
-    height: 20px;
-    width: 20px;
+}
+
+.newChildNodeButton {
+    cursor: pointer;
 }
 
 .nodeDescriptionButton {
     cursor: pointer;
-    height: 20px;
-    width: 20px;
 }
 
 .descriptionPane {
@@ -86,18 +98,6 @@ button:disabled {
 }
 .childNodesHidden {
     display: none;
-}
-
-.treeManagementPane {
-    position: fixed;
-    background-color: #DDDDDD;
-    width:100%;
-    left:0px;
-    bottom:0px;
-    height:auto;
-    min-height: 60px;
-    padding:auto;
-    margin:auto;
 }
 
 .addNewNodeButton {
@@ -163,6 +163,10 @@ button:disabled {
    display:block;
 }
 
+.formTextDataEntryHidden {
+    display:none;
+}
+
 .formTextDataEntry label {
     display: inline-block;
     width: 250px;
@@ -215,17 +219,13 @@ button:disabled {
     position:relative;
     float: left;
     clear: left;
-    border: 3px solid #919191;
+    /*border: 3px solid #919191;*/
     background-color: #ffffff;
     width: 800px;
 }
 
 .subTree .subTree {
     margin-left: 40px;
-}
-
-.treeNode {
-    position:relative;
 }
 
 
@@ -257,6 +257,14 @@ button:disabled {
     background-color: #39248D
 }
 
+.nodeMain {
+    display: inline-block;
+    position:relative;
+    float:left;
+    width: 100%;
+    border-bottom : 2px #444444 solid;
+}
+
 
 .nodeTitle {
     display: inline-block;
@@ -265,7 +273,6 @@ button:disabled {
     line-height: 2;
     padding-left: 10px;
     margin-right: 40px;
-    border : 1px blue solid;
     word-wrap: break-word;
     max-width : 80%;
 }
@@ -287,7 +294,6 @@ button:disabled {
     float: left;
     text-align: center;
     vertical-align: middle;
-    border: 2px green solid;
     width: 40px;
     height: 40px;
     line-height: 40px;
@@ -300,22 +306,28 @@ button:disabled {
     top: 5%;
     right:2%;
     overflow:hidden;
-    border: 1px solid yellow;
 }
 
 .nodeManagement img {
     margin-left: 5px;
 }
 
-.nodeDescription {
+.nodeInfo {
+    display: inline-block;
+    float: left;
+    width: 100%;
     font: 14pt black;
+    padding: 10px;
+}
+
+.nodeDescription {
     line-height: 2;
     padding-left: 15px;
     padding-right: 15px;
-    border : 1px #A1A1A1 solid;
     display: inline-block;
     float: left;
     clear: left;
+    width: 100%;
 }
 
 .childrenPane {
@@ -333,6 +345,71 @@ button:disabled {
     display: none;
 }
 
+.requiredPrereq {
+    font: 14pt black;
+}
 
+.requiredPrereq:hover {
+    font: 14pt red;
+    color: red;
+}
+
+/*
+ Status Pane - element that shows server and frontend events to user
+ */
+.statusPane, .statusPaneAlert {
+    display: inline-block;
+    position: fixed;
+    font: 14pt Aerial;
+    background-color: #DDDDDD;
+    color: black;
+    width:100%;
+    left:0px;
+    bottom:0px;
+    height:auto;
+    min-height: 60px;
+    padding:auto;
+    margin:auto;
+    float: left;
+}
+
+.statusPaneHidden {
+    display:none;
+}
+
+.statusPaneAlert {
+    background-color: #DD1111;
+    color: white;
+}
+
+.serverResponse {
+    display:inline-block;
+    vertical-align: center;
+}
+
+.serverResponse, .uiMessage {
+    display:inline-block;
+    float: left;
+    width : 100%;
+    vertical-align: center;
+    padding: 10px;
+}
+
+
+
+
+
+
+.treeManagementPane {
+    position: fixed;
+    background-color: #DDDDDD;
+    width:100%;
+    left:0px;
+    bottom:0px;
+    height:auto;
+    min-height: 60px;
+    padding:auto;
+    margin:auto;
+}
 
 

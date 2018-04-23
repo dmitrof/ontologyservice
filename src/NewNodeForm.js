@@ -52,12 +52,12 @@ class NewNodeForm extends Component {
         return (
             <form className="nodeForm" onSubmit={ this.handleSubmit}>
                 <div className="newNodeTextData">
-                    <div className="formTextDataEntry">
+                    <div className={this.props.childNodeForm ? "formTextDataEntryHidden" : "formTextDataEntry"}>
                         <label>URI</label>
                         <input
                             type='text'
                             placeholder='URI'
-                            value={this.state.uri}
+                            value={this.props.uri ? this.props.uri : this.state.uri}
                             onChange={ this.handleUriChange } />
                     </div>
                     <div className="formTextDataEntry">
@@ -74,6 +74,7 @@ class NewNodeForm extends Component {
                             type='text'
                             placeholder='Описание'
                             value={this.state.description}
+
                             onChange={ this.handleDescriptionChange } />
                     </div>
                 </div>

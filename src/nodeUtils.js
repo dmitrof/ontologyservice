@@ -32,11 +32,14 @@ let validatePrereqRec = (node_uri, prereq, nodesMap, seenNodes) => {
     seenNodes[prereq.uri] = true;
     let result = true;
     for (let adjacentNodeUri of prereq.prereq_uris) {
-        let adjacentNode = nodesMap[adjacentNodeUri];
-        if (seenNodes[adjacentNode.uri] || adjacentNodeUri === node_uri)
-            return false;
-        else
-            result = validatePrereqRec(node_uri, adjacentNode, nodesMap, seenNodes);
+        if (nodesMap.hasOwnProperty(adjacentNodeUri))
+        {
+            let adjacentNode = nodesMap[adjacentNodeUri];
+            if (seenNodes[adjacentNode.uri] || adjacentNodeUri === node_uri)
+                return false;
+            else
+                result = validatePrereqRec(node_uri, adjacentNode, nodesMap, seenNodes);
+        }
     }
     return result;
 };
@@ -52,7 +55,7 @@ let getValidPrereqs = (node_uri, nodesMap) => {
         if (nodesMap.hasOwnProperty(candidate_uri) && validatePrereq(node_uri, nodesMap[candidate_uri], nodesMap))
             validPrereqUris.push(candidate_uri);
     }
-    console.log("validPrereqUris =" + validPrereqUris)
+    console.log("validPrereqUris =" + validPrereqUris);
     return validPrereqUris;
 };
 

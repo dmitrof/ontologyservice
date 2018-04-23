@@ -51,38 +51,34 @@ class TreeNode extends Component {
         ;
         let childForm = this.newChildForm();
         let editNodeForm = this.editNodeForm();
-        console.log(this.state.expand);
         return (
             <div className="subTree">
-                <div className="treeNode">
-                    <div >
-                        <div className={this.getClassName()} onClick={this.onToggle} onMouseOver={this.onMouseOver}
-                             onMouseOut={this.onMouseOut}>
-                            <div>
-                                {this.expandButton(this.expand, this.state.expand)}
-                            </div>
-                            <div className='nodeTitle'>
-                                {this.props.node.name}
-                            </div>
-                            <div className='nodeManagement'>
-                                <img src="/see.png" className='nodeDescriptionButton' onClick={this.expandInfo}/>
-                                <img src="/edit.jpg" className='editButton' onClick={this.editNode}/>
-                                <img src="/delete.png" className='deleteButton'
-                                     onClick={() => this.props.deleteNode(this.props.node.uri)}/>
-                            </div>
+                <div className={this.getClassName()} onClick={this.onToggle} onMouseOver={this.onMouseOver}
+                     onMouseOut={this.onMouseOut} ref={this.props.nodeRef}>
+                    <div className="nodeMain">
+                        <div>
+                            {this.expandButton(this.expand, this.state.expand)}
+                        </div>
+                        <div className='nodeTitle'>
+                            {this.props.node.name}
                         </div>
                     </div>
-                    <div className='nodeDescription'>
-                        {this.nodeInfoExpansion()}
+                    <div className='nodeManagement'>
+                        <img src="/see.png" className='nodeDescriptionButton' onClick={this.expandInfo}/>
+                        <img src="/new.png" className='newChildNodeButton' onClick={this.childModeToggle}/>
+                        <img src="/edit.jpg" className='editButton' onClick={this.editNode}/>
+                        <img src="/delete.png" className='deleteButton'
+                             onClick={() => this.props.deleteNode(this.props.node.uri)}/>
                     </div>
-                    <div className="editNodeForm">
-                        {editNodeForm}
-                    </div>
-                    <div className="childrenPane">
-                        {this.childrenExpansion(children)}
-                        <button onClick={this.childModeToggle}>Создать подраздел</button>
-                        {this.state.childMode ? childForm : ''}
-                    </div>
+                    {this.nodeInfoExpansion()}
+                </div>
+
+                <div className="editNodeForm">
+                    {editNodeForm}
+                </div>
+                <div className="childrenPane">
+                    {this.childrenExpansion(children)}
+                    {this.state.childMode ? childForm : ''}
                 </div>
             </div>
         )
@@ -97,12 +93,16 @@ class TreeNode extends Component {
 
     nodeInfoExpansion = () => {
         if (this.state.expandInfo)
-            return (<div>
-                uri : {this.props.node.uri}
+            return (<div className='nodeInfo'>
+                Уникальный идентификатор темы : {this.props.node.uri}
+                <br/>
                 <div className='nodeDescription'>
                     Описание : <br/> {this.props.node.description}
                 </div>
-                Требуемые компетенции: {this.props.node.prereq_uris.map(prereq => this.prereqInList(prereq))}
+                <div className='requiredPrereqList'>
+                    Требуемые компетенции: <br/>
+                    {this.props.node.prereq_uris.map(prereq_uri => this.props.tree.requiredPrereqLink(prereq_uri))}
+                </div>
             </div>)
     };
 
@@ -139,5 +139,8 @@ class TreeNode extends Component {
     }
 }
 
+class NodeLink extends Component {
+
+}
 
 export default TreeNode;
